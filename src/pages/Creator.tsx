@@ -1,109 +1,113 @@
-import { useState, useRef, useEffect } from 'react'
-import { 
-  PencilCircle, 
-  Image, 
-  Download, 
-  MagicWand, 
-  Trash, 
+import { useState, useRef, useEffect } from "react";
+import {
+  Image,
+  Download,
+  MagicWand,
+  Trash,
   ArrowsClockwise,
   SquaresFour,
   Rows,
   BookOpen,
   CaretDown,
-  CaretUp
-} from 'phosphor-react'
+  CaretUp,
+} from "phosphor-react";
 
-type Gender = 'boy' | 'girl'
-type Style = 'comic' | 'realistic' | 'anime' | 'watercolor'
-type StoryTheme = 'hero' | 'friendship' | 'helping' | 'adventure' | 'magic' | 'nature' | 'family' | 'learning' | 'animals'
-type PageCount = 5 | 10
+type Gender = "boy" | "girl";
+type Style = "comic" | "realistic" | "anime" | "watercolor";
+type StoryTheme =
+  | "hero"
+  | "friendship"
+  | "helping"
+  | "adventure"
+  | "magic"
+  | "nature"
+  | "family"
+  | "learning"
+  | "animals";
+type PageCount = 5 | 10;
 
 interface GeneratedImage {
-  id: number
-  url: string
+  id: number;
+  url: string;
 }
 
 interface PromptOptions {
-  gender: Gender | null
-  style: Style | null
-  theme: StoryTheme | null
-  pageCount: PageCount
+  gender: Gender | null;
+  style: Style | null;
+  theme: StoryTheme | null;
+  pageCount: PageCount;
 }
 
-const INITIAL_VISIBLE_THEMES = 4 // Show 2 rows with 2 themes each
+const INITIAL_VISIBLE_THEMES = 4; // Show 2 rows with 2 themes each
 
 export default function Creator() {
-  const [prompt, setPrompt] = useState('')
-  const [images, setImages] = useState<GeneratedImage[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [isGridView, setIsGridView] = useState(true)
-  const [showAllThemes, setShowAllThemes] = useState(false)
-  const [themesHeight, setThemesHeight] = useState('auto')
-  const themesContainerRef = useRef<HTMLDivElement>(null)
+  const [prompt, setPrompt] = useState("");
+  const [images, _setImages] = useState<GeneratedImage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGridView, setIsGridView] = useState(true);
+  const [showAllThemes, setShowAllThemes] = useState(false);
+  const [themesHeight, setThemesHeight] = useState("auto");
+  const themesContainerRef = useRef<HTMLDivElement>(null);
   const [options, setOptions] = useState<PromptOptions>({
     gender: null,
     style: null,
     theme: null,
-    pageCount: 5
-  })
+    pageCount: 5,
+  });
 
   const storyThemes = [
-    { value: 'hero', label: 'Hero Adventure' },
-    { value: 'friendship', label: 'Friendship' },
-    { value: 'magic', label: 'Magical World' },
-    { value: 'animals', label: 'Animal Friends' },
-    { value: 'adventure', label: 'Exploration' },
-    { value: 'nature', label: 'Nature Discovery' },
-    { value: 'helping', label: 'Helping Others' },
-    { value: 'family', label: 'Family Time' },
-    { value: 'learning', label: 'Learning & Growth' },
-  ]
-
-  const visibleThemes = showAllThemes 
-    ? storyThemes 
-    : storyThemes.slice(0, INITIAL_VISIBLE_THEMES)
+    { value: "hero", label: "Hero Adventure" },
+    { value: "friendship", label: "Friendship" },
+    { value: "magic", label: "Magical World" },
+    { value: "animals", label: "Animal Friends" },
+    { value: "adventure", label: "Exploration" },
+    { value: "nature", label: "Nature Discovery" },
+    { value: "helping", label: "Helping Others" },
+    { value: "family", label: "Family Time" },
+    { value: "learning", label: "Learning & Growth" },
+  ];
 
   useEffect(() => {
     if (themesContainerRef.current) {
-      setThemesHeight(themesContainerRef.current.scrollHeight + 'px')
+      setThemesHeight(themesContainerRef.current.scrollHeight + "px");
     }
-  }, [showAllThemes])
+  }, [showAllThemes]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
     // Add API integration here
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const handleOptionSelect = (category: keyof PromptOptions, value: any) => {
-    setOptions(prev => ({
+    setOptions((prev) => ({
       ...prev,
-      [category]: prev[category] === value ? null : value
-    }))
-  }
+      [category]: prev[category] === value ? null : value,
+    }));
+  };
 
-  const OptionButton = ({ 
-    category, 
-    value, 
-    label 
-  }: { 
-    category: keyof PromptOptions, 
-    value: any, 
-    label: string 
+  const OptionButton = ({
+    category,
+    value,
+    label,
+  }: {
+    category: keyof PromptOptions;
+    value: any;
+    label: string;
   }) => (
     <button
       type="button"
       onClick={() => handleOptionSelect(category, value)}
       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-        options[category] === value 
-          ? 'bg-primary text-white' 
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+        options[category] === value
+          ? "bg-primary text-white"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
       }`}
     >
       {label}
     </button>
-  )
+  );
 
   return (
     <div className="bg-gray-100 min-h-screen p-6">
@@ -113,14 +117,22 @@ export default function Creator() {
           <div className="w-1/2 p-8 overflow-y-auto border-r border-gray-200">
             <div className="max-w-xl mx-auto">
               <div className="flex items-center gap-3 mb-8">
-                <MagicWand size={32} weight="duotone" className="text-primary" />
-                <h2 className="text-3xl font-bold gradient-text">Create Your Story</h2>
+                <MagicWand
+                  size={32}
+                  weight="duotone"
+                  className="text-primary"
+                />
+                <h2 className="text-3xl font-bold gradient-text">
+                  Create Your Story
+                </h2>
               </div>
 
               <div className="space-y-6">
                 {/* Gender Selection */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Main Character</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Main Character
+                  </label>
                   <div className="flex gap-2">
                     <OptionButton category="gender" value="boy" label="Boy" />
                     <OptionButton category="gender" value="girl" label="Girl" />
@@ -129,15 +141,17 @@ export default function Creator() {
 
                 {/* Story Theme */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Story Theme</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Story Theme
+                  </label>
                   <div className="space-y-2">
-                    <div 
+                    <div
                       ref={themesContainerRef}
                       className="overflow-hidden theme-transition"
-                      style={{ height: showAllThemes ? themesHeight : '5rem' }}
+                      style={{ height: showAllThemes ? themesHeight : "5rem" }}
                     >
                       <div className="flex flex-wrap gap-2">
-                        {storyThemes.map(theme => (
+                        {storyThemes.map((theme) => (
                           <OptionButton
                             key={theme.value}
                             category="theme"
@@ -170,27 +184,57 @@ export default function Creator() {
 
                 {/* Style Selection */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Art Style</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Art Style
+                  </label>
                   <div className="flex flex-wrap gap-2">
-                    <OptionButton category="style" value="comic" label="Comic Book" />
-                    <OptionButton category="style" value="realistic" label="Realistic" />
-                    <OptionButton category="style" value="anime" label="Anime" />
-                    <OptionButton category="style" value="watercolor" label="Watercolor" />
+                    <OptionButton
+                      category="style"
+                      value="comic"
+                      label="Comic Book"
+                    />
+                    <OptionButton
+                      category="style"
+                      value="realistic"
+                      label="Realistic"
+                    />
+                    <OptionButton
+                      category="style"
+                      value="anime"
+                      label="Anime"
+                    />
+                    <OptionButton
+                      category="style"
+                      value="watercolor"
+                      label="Watercolor"
+                    />
                   </div>
                 </div>
 
                 {/* Page Count */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Number of Pages</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Number of Pages
+                  </label>
                   <div className="flex gap-2">
-                    <OptionButton category="pageCount" value={5} label="5 Pages" />
-                    <OptionButton category="pageCount" value={10} label="10 Pages" />
+                    <OptionButton
+                      category="pageCount"
+                      value={5}
+                      label="5 Pages"
+                    />
+                    <OptionButton
+                      category="pageCount"
+                      value={10}
+                      label="10 Pages"
+                    />
                   </div>
                 </div>
 
                 {/* Story Description */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Story Description</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Story Description
+                  </label>
                   <div className="relative">
                     <textarea
                       className="w-full h-32 p-4 border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors duration-200"
@@ -201,7 +245,7 @@ export default function Creator() {
                     {prompt && (
                       <button
                         type="button"
-                        onClick={() => setPrompt('')}
+                        onClick={() => setPrompt("")}
                         className="absolute top-2 right-2 p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
                       >
                         <Trash size={20} weight="duotone" />
@@ -217,7 +261,11 @@ export default function Creator() {
                 >
                   {isLoading ? (
                     <>
-                      <ArrowsClockwise size={24} weight="duotone" className="animate-spin" />
+                      <ArrowsClockwise
+                        size={24}
+                        weight="duotone"
+                        className="animate-spin"
+                      />
                       Creating Your Story...
                     </>
                   ) : (
@@ -239,11 +287,13 @@ export default function Creator() {
                   <Image size={32} weight="duotone" className="text-primary" />
                   <h2 className="text-3xl font-bold gradient-text">Preview</h2>
                 </div>
-                
+
                 <button
                   onClick={() => setIsGridView(!isGridView)}
                   className="p-2 text-gray-600 hover:text-primary transition-colors duration-200"
-                  title={isGridView ? "Switch to single view" : "Switch to grid view"}
+                  title={
+                    isGridView ? "Switch to single view" : "Switch to grid view"
+                  }
                 >
                   {isGridView ? (
                     <SquaresFour size={24} weight="duotone" />
@@ -255,12 +305,22 @@ export default function Creator() {
 
               {images.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-500 bg-white rounded-xl shadow-sm">
-                  <BookOpen size={48} weight="duotone" className="text-gray-400 mb-4" />
+                  <BookOpen
+                    size={48}
+                    weight="duotone"
+                    className="text-gray-400 mb-4"
+                  />
                   <p className="text-xl">Your story pages will appear here</p>
-                  <p className="text-sm mt-2">Fill in the details and generate your story</p>
+                  <p className="text-sm mt-2">
+                    Fill in the details and generate your story
+                  </p>
                 </div>
               ) : (
-                <div className={`grid ${isGridView ? 'grid-cols-2 gap-4' : 'grid-cols-1 gap-6'}`}>
+                <div
+                  className={`grid ${
+                    isGridView ? "grid-cols-2 gap-4" : "grid-cols-1 gap-6"
+                  }`}
+                >
                   {images.map((image) => (
                     <div key={image.id} className="relative group">
                       <img
@@ -269,13 +329,13 @@ export default function Creator() {
                         className="w-full h-auto rounded-lg shadow-md"
                       />
                       <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2">
-                        <button 
+                        <button
                           className="bg-white p-2 rounded-full shadow-lg text-primary hover:text-primary/80 transition-colors duration-200"
                           title="Download"
                         >
                           <Download size={20} weight="duotone" />
                         </button>
-                        <button 
+                        <button
                           className="bg-white p-2 rounded-full shadow-lg text-red-500 hover:text-red-600 transition-colors duration-200"
                           title="Delete"
                         >
@@ -291,5 +351,5 @@ export default function Creator() {
         </div>
       </div>
     </div>
-  )
+  );
 }
